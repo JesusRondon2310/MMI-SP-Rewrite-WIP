@@ -349,6 +349,8 @@ namespace MMI_SP
         /// Return the license plate of the vehicle.
         internal string GetVehicleLicensePlate(string vehIdentifier)
         {
+            if (_dbFile == null) return String.Empty;
+
             if (_dbFile.Element("Vehicles") != null)
             {
                 XElement vehicleSection = _dbFile.Element("Vehicles").Element(vehIdentifier);
@@ -374,6 +376,7 @@ namespace MMI_SP
         /// <param name="showClassName"></param>
         internal string GetVehicleFriendlyName(string vehIdentifier, bool showClassName = true)
         {
+            if (_dbFile == null) return "Unknown";
             if (_dbFile.Element("Vehicles") != null)
             {
                 XElement vehicleSection = _dbFile.Element("Vehicles").Element(vehIdentifier);
@@ -422,6 +425,9 @@ namespace MMI_SP
         /// <returns></returns>
         internal string GetVehicleModelName(string vehIdentifier)
         {
+            // Protección: si la base de datos no está cargada, devolvemos "Unknown"
+            if (_dbFile == null) return "Unknown";
+
             if (_dbFile.Element("Vehicles") != null)
             {
                 XElement vehicleSection = _dbFile.Element("Vehicles").Element(vehIdentifier);

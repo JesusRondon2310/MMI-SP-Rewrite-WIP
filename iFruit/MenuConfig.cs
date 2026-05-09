@@ -59,24 +59,8 @@ namespace MMI_SP.iFruit
 
         private void AddMenuConfigLanguage(UIMenu menu, string key, string value, string description)
         {
-            bool found = false;
+            List<dynamic> languages = new List<dynamic> { "default" };
             int counter = 0;
-            List<dynamic> languages = new List<dynamic>();
-
-            foreach (string file in Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MMI"), "*.xml"))
-            {
-                FileInfo fileInfo = new FileInfo(file);
-                if (fileInfo.Name != "db.xml")
-                { 
-                    string name = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
-                    languages.Add(name);
-                    if (!found)
-                        if (string.Compare(value, name, true) == 0)
-                            found = true;
-                        else
-                            counter++;
-                }
-            }
 
             UIMenuListItem listItem = new UIMenuListItem(key, languages, counter, description);
             menu.AddItem(listItem);
