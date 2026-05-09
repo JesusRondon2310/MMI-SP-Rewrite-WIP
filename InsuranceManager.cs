@@ -164,22 +164,33 @@ namespace MMI_SP
         // Database file ////////////////////////////////////////////////////////////////////
 
 
+        private Dictionary<string, List<string>> _insuredVehicles;
+        private Dictionary<string, string> _vehicleModels;
+        private Dictionary<string, string> _vehiclePlates;
+        private Dictionary<string, string> _vehicleOwners;
+
         // Constructor: inicializa la instancia única y carga la base de datos XML \\
         public InsuranceManager()
         {
             _instance = this;
 
-            // Si no existe el archivo, lo crea
-            if (!File.Exists(_dbFilePath))
-                CreateDBFile();
+            _insuredVehicles = new Dictionary<string, List<string>>();
+            _vehicleModels = new Dictionary<string, string>();
+            _vehiclePlates = new Dictionary<string, string>();
+            _vehicleOwners = new Dictionary<string, string>();
+
             try
             {
-                // Carga el XML en memoria
-                _dbFile = XDocument.Load(_dbFilePath);
+                string dbPath = Path.Combine(Config.BaseDir, "db.xml");
+                if (File.Exists(dbPath))
+                {
+                    XDocument doc = XDocument.Load(dbPath);
+                    // Código para poblar las listas desde el XML (si existe contenido)
+                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Logger.Info("Error: InsuranceManager - Cannot load database file. " + e.Message);
+                Logger.Exception(ex);
             }
         }
         // Constructor: inicializa la instancia única y carga la base de datos XML \\
