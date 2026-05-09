@@ -107,47 +107,68 @@ namespace MMI_SP
             _menuPool.Add(submenu);
 
             UIMenuItem item = new UIMenuItem(itemText, itemDescription);
-            item.Activated += (sender, selectedItem) => submenu.Visible = true;
             parent.AddItem(item);
+
+            // Vincula el submenú al ítem (gestiona la apertura/cierre automáticamente)
+            parent.BindMenuToItem(submenu, item);
 
             rebuildAction?.Invoke();
             return submenu;
         }
 
+        /// <summary>
+        /// Construye o actualiza el botón "Asegurar vehículo" según el último vehículo usado.
+        /// </summary>
         private void BuildItemInsure()
         {
+            // --- Protecciones iniciales ---
             if (InsuranceManager.Instance == null) return;
 
             Vehicle veh = Game.Player.LastVehicle;
             if (veh == null || !veh.Exists()) return;
 
+            // --- Eliminar el ítem anterior si existe (evita duplicados) ---
             if (_itemInsure != null)
             {
                 _itemInsure.Activated -= OnInsureActivated;
+                _mainMenu.MenuItems.Remove(_itemInsure);
             }
 
+            // --- Obtener datos del vehículo ---
             int cost = InsuranceManager.GetVehicleInsuranceCost(veh);
             string vehName = Function.Call<string>(Hash.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL, veh.Model.Hash);
+            bool isInsured = InsuranceManager.IsVehicleInsured(Utils.Vehicle.GetVehicleIdentifier(veh));
+            bool isInsurable = InsuranceManager.IsVehicleInsurable(veh);
 
-            if (!InsuranceManager.IsVehicleInsured(Utils.Vehicle.GetVehicleIdentifier(veh)))
+            // --- Determinar texto y comportamiento según el estado ---
+            string title = "Asegurar vehículo";
+            string description;
+            bool enabled = true;
+
+            if (isInsured)
             {
-                if (InsuranceManager.IsVehicleInsurable(veh))
-                {
-                    _itemInsure = new UIMenuItem("Asegurar vehículo", $"Coste: {cost}$\n{vehName}");
-                    _itemInsure.Activated += OnInsureActivated;
-                }
-                else
-                {
-                    _itemInsure = new UIMenuItem("Asegurar vehículo", $"No se puede asegurar este vehículo\n{vehName}");
-                    _itemInsure.Enabled = false;
-                }
+                description = $"Este vehículo ya está asegurado\n{vehName}";
+                enabled = false;
             }
-            else
+            else if (!isInsurable)
             {
-                _itemInsure = new UIMenuItem("Asegurar vehículo", $"Este vehículo ya está asegurado\n{vehName}");
-                _itemInsure.Enabled = false;
+                description = $"No se puede asegurar este vehículo\n{vehName}";
+                enabled = false;
+            }
+            else // No asegurado y asegurable
+            {
+                description = $"Coste: {cost}$\n{vehName}";
             }
 
+            // --- Crear el nuevo ítem ---
+            _itemInsure = new UIMenuItem(title, description);
+            _itemInsure.Enabled = enabled;
+            if (enabled)
+            {
+                _itemInsure.Activated += OnInsureActivated;
+            }
+
+            // --- Añadir al menú principal ---
             _mainMenu.AddItem(_itemInsure);
         }
 
