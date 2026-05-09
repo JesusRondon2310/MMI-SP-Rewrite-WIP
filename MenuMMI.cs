@@ -81,6 +81,17 @@ namespace MMI_SP
         }
 
         /// <summary>
+        /// Reproduce el sonido de éxito (si se abrió desde iFruit) y muestra la notificación.
+        /// </summary>
+        /// <param name="message">Texto principal de la notificación.</param>
+        private void PlaySuccess(string message)
+        {
+            if (OpenedFromiFruit)
+                MMISound.Play(MMISound.SoundFamily.Okay);
+            Utils.ShowNotification(NotifyChar, NotifyTitle, message, "");
+        }
+
+        /// <summary>
         /// Se asegura de que el menú nunca esté vacío y restablece el índice seleccionado.
         /// </summary>
         private void EnsureMenuNotEmptyAndResetIndex(UIMenu menu, string itemDescription)
@@ -168,8 +179,7 @@ namespace MMI_SP
                 return true;
             }
 
-            if (OpenedFromiFruit) MMISound.Play(MMISound.SoundFamily.NoMoney);
-            Utils.ShowNotification(NotifyChar, NotifyTitle, NoMoneyMsg, "");
+            if (OpenedFromiFruit) PlaySuccess("Vehículo asegurado correctamente.");
             return false;
         }
 
@@ -252,9 +262,8 @@ namespace MMI_SP
 
                 cancelItem.Activated += (sender, selectedItem) =>
                 {
-                    if (OpenedFromiFruit) MMISound.Play(MMISound.SoundFamily.Okay);
-                    InsuranceManager.Instance.CancelVehicle(vehID);
-                    Utils.ShowNotification(NotifyChar, NotifyTitle, "Seguro cancelado correctamente.", "");
+                    if (OpenedFromiFruit) InsuranceManager.Instance.CancelVehicle(vehID);
+                    PlaySuccess("Seguro cancelado correctamente.");
                     RebuildMenuCancel();
                     BuildItemInsure();
                     RebuildMenuRecover();
@@ -296,9 +305,8 @@ namespace MMI_SP
                 {
                     if (!TrySpendMoney(cost)) return;
 
-                    if (OpenedFromiFruit) MMISound.Play(MMISound.SoundFamily.Okay);
-                    InsuranceManager.Instance.RecoverVehicle(vehID);
-                    Utils.ShowNotification(NotifyChar, NotifyTitle, "Vehículo recuperado correctamente.", "");
+                    if (OpenedFromiFruit) InsuranceManager.Instance.RecoverVehicle(vehID);
+                    PlaySuccess("Vehículo recuperado correctamente.");
                     RebuildMenuRecover();
                 };
             }
@@ -345,46 +353,47 @@ namespace MMI_SP
         /// </summary>
         private void ChangePlateAction(string vehID, int price, UIMenuItem item)
         {
-            if (OpenedFromiFruit) MMISound.Play(MMISound.SoundFamily.Okay);
-
-            string oldPlate = InsuranceManager.Instance.GetVehicleLicensePlate(vehID);
-            string newPlate = Game.GetUserInput(WindowTitle.EnterMessage60, oldPlate, 8);
-            if (string.IsNullOrEmpty(newPlate)) return;
-
-            newPlate = newPlate.Trim().ToUpperInvariant().PadRight(8);
-
-            if (newPlate == oldPlate) return;
-
-            // Cobrar (ya realizado en TrySpendMoney)
-            string newVehID = InsuranceManager.Instance.ChangeVehicleLicensePlate(vehID, newPlate);
-
-            // Actualizar descripción del ítem
-            item.Description = InsuranceManager.Instance.GetVehicleFriendlyName(newVehID, false);
-
-            // Actualizar vehículos en mundo con el identificador antiguo
-            for (int i = InsuranceObserver.InsuredVehList.Count - 1; i >= 0; i--)
+            if (OpenedFromiFruit)
             {
-                if (Utils.Vehicle.GetVehicleIdentifier(InsuranceObserver.InsuredVehList[i]) == vehID)
+                string oldPlate = InsuranceManager.Instance.GetVehicleLicensePlate(vehID);
+                string newPlate = Game.GetUserInput(WindowTitle.EnterMessage60, oldPlate, 8);
+                if (string.IsNullOrEmpty(newPlate)) return;
+
+                newPlate = newPlate.Trim().ToUpperInvariant().PadRight(8);
+
+                if (newPlate == oldPlate) return;
+
+                // Cobrar (ya realizado en TrySpendMoney)
+                string newVehID = InsuranceManager.Instance.ChangeVehicleLicensePlate(vehID, newPlate);
+
+                // Actualizar descripción del ítem
+                item.Description = InsuranceManager.Instance.GetVehicleFriendlyName(newVehID, false);
+
+                // Actualizar vehículos en mundo con el identificador antiguo
+                for (int i = InsuranceObserver.InsuredVehList.Count - 1; i >= 0; i--)
                 {
-                    InsuranceObserver.InsuredVehList[i].Mods.LicensePlate = newPlate;
-                    InsuranceObserver.InsuredVehList.RemoveAt(i);
+                    if (Utils.Vehicle.GetVehicleIdentifier(InsuranceObserver.InsuredVehList[i]) == vehID)
+                    {
+                        InsuranceObserver.InsuredVehList[i].Mods.LicensePlate = newPlate;
+                        InsuranceObserver.InsuredVehList.RemoveAt(i);
+                    }
                 }
+
+                // Actualizar blips
+                if (InsuranceObserver.BlipsToRemove.TryGetValue(vehID, out Blip vehBlip))
+                {
+                    InsuranceObserver.BlipsToRemove.Remove(vehID);
+                    InsuranceObserver.BlipsToRemove.Add(newVehID, vehBlip);
+                }
+
+                PlaySuccess($"Placa cambiada: {oldPlate} → {newPlate}");
+
+                // Refrescar todos los menús afectados
+                BuildItemInsure();
+                RebuildMenuCancel();
+                RebuildMenuRecover();
+                RebuildMenuPlate();
             }
-
-            // Actualizar blips
-            if (InsuranceObserver.BlipsToRemove.TryGetValue(vehID, out Blip vehBlip))
-            {
-                InsuranceObserver.BlipsToRemove.Remove(vehID);
-                InsuranceObserver.BlipsToRemove.Add(newVehID, vehBlip);
-            }
-
-            Utils.ShowNotification(NotifyChar, NotifyTitle, $"Placa cambiada: {oldPlate} → {newPlate}", "");
-
-            // Refrescar todos los menús afectados
-            BuildItemInsure();
-            RebuildMenuCancel();
-            RebuildMenuRecover();
-            RebuildMenuPlate();
         }
 
         // ------------------------------------------------------------------------
