@@ -173,14 +173,14 @@ namespace MMI_SP
         /// </summary>
         private bool TrySpendMoney(int amount)
         {
-            if (Game.Player.Money >= amount)
+            if (Game.Player.Money < amount)
             {
-                Game.Player.Money -= amount;
-                return true;
+                if (OpenedFromiFruit) MMISound.Play(MMISound.SoundFamily.NoMoney);
+                Utils.ShowNotification(NotifyChar, NotifyTitle, NoMoneyMsg, "");
+                return false;
             }
-
-            if (OpenedFromiFruit) PlaySuccess("Vehículo asegurado correctamente.");
-            return false;
+            Game.Player.Money -= amount;
+            return true;
         }
 
         /// <summary>
