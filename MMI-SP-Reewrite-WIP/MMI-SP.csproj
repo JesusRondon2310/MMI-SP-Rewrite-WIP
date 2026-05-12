@@ -70,6 +70,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agency\MainMenu\Cancel.cs" />
+    <Compile Include="Agency\MainMenu\SubMenus\CancelHandler.cs" />
+    <Compile Include="Agency\MainMenu\SubMenus\CancelPopulate.cs" />
+    <Compile Include="Agency\MainMenu\SubMenus\Create.cs" />
+    <Compile Include="Agency\MainMenu\SubMenus\Populate.cs" />
     <Compile Include="Agency\Office\Ambient\Builder.cs" />
     <Compile Include="Agency\Office\Ambient\CleanUp.cs" />
     <Compile Include="Agency\Office\Ambient\CollectionPicker.cs" />

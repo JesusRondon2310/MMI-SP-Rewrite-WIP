@@ -1,4 +1,5 @@
 ﻿using GTA;
+using System.Collections.Generic;
 
 namespace MMI_SP.Insurance
 {
@@ -20,5 +21,7 @@ namespace MMI_SP.Insurance
         public static bool IsInsurable(Vehicle veh) => Manager.IsInsurable(veh);
         public static int GetCost(Vehicle veh) => Calculator.GetCost(veh);
         public static void Insure(Vehicle veh) => _manager?.Insure(veh);
+        public static List<string> GetInsuredList() => _manager?.GetInsuredList() ?? new List<string>();
+        public static void Cancel(string vehicleId) => _manager?.Cancel(vehicleId);
     }
 }

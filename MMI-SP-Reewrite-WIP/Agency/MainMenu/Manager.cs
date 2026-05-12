@@ -17,7 +17,7 @@ namespace MMI_SP.Agency.MainMenu
             BuildAndSubscribe(onClose);
         }
 
-        public void RebuildMenu(Action onClose)
+        internal void RebuildMenu(Action onClose)
         {
             if (_mainMenu != null && _closeSubscribed)
             {
@@ -31,8 +31,7 @@ namespace MMI_SP.Agency.MainMenu
         private void BuildAndSubscribe(Action onClose)
         {
             (_pool, _mainMenu) = Interface.Build();
-            _pool.RefreshIndex();
-            Execute.Rebuild(_mainMenu);
+            ExecuteRebuild.MainMenu(_mainMenu, _pool);
 
             _onCloseAction = onClose;
             if (!_closeSubscribed)

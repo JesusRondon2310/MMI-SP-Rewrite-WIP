@@ -38,5 +38,21 @@ namespace MMI_SP.Insurance
                 Logger.Debug($"Vehículo asegurado: {id}");
             }
         }
+
+        // Devuelve una copia de la lista de vehículos asegurados (IDs)
+        internal List<string> GetInsuredList()
+        {
+            return new List<string>(_insuredVehicles);
+        }
+
+        // Elimina un vehículo de la lista y persiste el cambio
+        internal void Cancel(string vehicleId)
+        {
+            if (_insuredVehicles.Remove(vehicleId))
+            {
+                Repository.Save(_insuredVehicles);
+                Logger.Debug($"Vehículo cancelado: {vehicleId}");
+            }
+        }
     }
 }

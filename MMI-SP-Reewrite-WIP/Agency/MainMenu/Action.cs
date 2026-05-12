@@ -32,6 +32,7 @@ namespace MMI_SP.Agency.MainMenu
 
             Game.Player.Money -= cost;
             Core.Insure(lastVeh);
+            Cancel.Refresh();
             Notification.Show(NotifyChar, NotifyTitle, "Vehículo asegurado correctamente.", "");
 
             // Deshabilitar y quitar la etiqueta de precio
