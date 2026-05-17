@@ -104,6 +104,7 @@
     <Compile Include="Helpers\Notification.cs" />
     <Compile Include="Helpers\Screen.cs" />
     <Compile Include="Helpers\Diagnostics.cs" />
+    <Compile Include="Helpers\Sprite.cs" />
     <Compile Include="Helpers\VehicleIdentifier.cs" />
     <Compile Include="Agency\MainMenu\Recover.cs" />
     <Compile Include="Agency\MainMenu\SubMenus\RecoverHandler.cs" />

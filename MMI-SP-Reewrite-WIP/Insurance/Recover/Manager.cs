@@ -1,7 +1,6 @@
 using System.Drawing;
 using GTA;
 using GTA.Math;
-using GTA.Native;
 using MMI_SP.PatternMatching;
 
 namespace MMI_SP.Insurance.Recover
@@ -52,12 +51,7 @@ namespace MMI_SP.Insurance.Recover
                 return new Err<bool>("No se pudo crear el vehículo en el depósito.");
 
             ApplyData(veh, data);
-            Function.Call(Hash.SET_ENTITY_AS_MISSION_ENTITY, veh.Handle, true, true);
-
-            Blip blip = veh.AddBlip();
-            blip.Sprite = BlipSprite.PersonalVehicleCar;
-            blip.Color = BlipColor.Yellow;
-            blip.Name = "Vehículo recuperado";
+            veh.IsPersistent = true;
 
             Logger.Debug($"Vehículo recuperado y depositado: {data.Id}");
             return new Ok<bool>(true);

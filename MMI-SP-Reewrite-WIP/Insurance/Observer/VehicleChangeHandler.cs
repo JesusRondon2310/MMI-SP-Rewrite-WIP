@@ -2,18 +2,20 @@ using GTA;
 using MMI_SP.Helpers;
 using MMI_SP.PatternMatching;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace MMI_SP.Insurance.Observer
 {
     internal static class VehicleChangeHandler
     {
         // ==========================================
-        // BLOQUE: Datos
+        // BLOQUE 1: Datos
         // ==========================================
         private static Vehicle _previousVehicle = null;
+        private static int _insuranceIconTimer = 0;
 
         // ==========================================
-        // BLOQUE: Funciones
+        // BLOQUE 2: Funciones
         // ==========================================
         internal static void Handle(
             List<Vehicle> insuredVehList,
@@ -21,6 +23,7 @@ namespace MMI_SP.Insurance.Observer
             Dictionary<string, Blip> blipsToRemove)
         {
             HandleVehicleChange(blipsToRemove);
+            DrawInsuranceSprite();
         }
 
         private static void HandleVehicleChange(Dictionary<string, Blip> blipsToRemove)
@@ -33,6 +36,7 @@ namespace MMI_SP.Insurance.Observer
             if (_previousVehicle != null)
             {
                 BlipManager.RemoveRecoverBlip(_previousVehicle, blipsToRemove);
+                _insuranceIconTimer = Game.GameTime + 4270;
             }
             else if (previous != null && previous.Exists())
             {
@@ -48,6 +52,19 @@ namespace MMI_SP.Insurance.Observer
 
             var result = BlipManager.AddVehicleBlip(vehicle);
             if (result is Ok<Blip> ok) blipsToRemove[vehId] = ok.Value;
+        }
+
+        private static void DrawInsuranceSprite()
+        {
+            if (Game.GameTime >= _insuranceIconTimer) return;
+            if (!System.IO.File.Exists(Config.InsuranceImage)) return;
+
+            Vehicle veh = Game.Player.Character.CurrentVehicle;
+            if (veh == null || !Insurer.IsInsurable(veh)) return;
+
+            bool isInsured = Insurer.Instance.IsInsured(veh);
+            Color color = isInsured ? Color.FromArgb(35, 199, 128) : Color.FromArgb(190, 0, 50);
+            Sprite.InsuranceStatus(Config.InsuranceImage, 1225f, 600f, color);
         }
     }
 }
