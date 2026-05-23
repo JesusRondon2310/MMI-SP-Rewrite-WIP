@@ -1,4 +1,4 @@
-# MMI-SP
+# MMI-SP-Rewrite
 _Un mod para GTA V_
 __Mors Mutual Insurance - Single Player__
 
@@ -8,11 +8,11 @@ __Mors Mutual Insurance - Single Player__
 
 ¿Cansado de perder tu vehículo tuneado de $500,000 porque se te quedó por una misión o decidiste probar si era sumergible? ¡No esperes más y asegura tu vehículo ahora en Mors Mutual Insurance!
 
-La descarga de la versión W.I.P. está disponible [aquí](https://github.com/JesusRondon2310/MMI-SP-Rewrite-WIP/releases/tag/0.3) 
+La descarga está disponible [aquí](https://github.com/JesusRondon2310/MMI-SP-Rewrite-WIP/releases/tag/0.3) 
 
 # Historial de Cambios
 
-# Changelog — MMI-SP
+# Changelog — MMI-SP-Rewrite
 
 ## Beta 2 (24/05/2026)
 - **Módulo iFruitAddon2 3.1.1 completo.** Contactos MMI, Mecánico y Configuración funcionales en el teléfono.
@@ -84,5 +84,6 @@ La descarga de la versión W.I.P. está disponible [aquí](https://github.com/Je
 Recuerda dar los permisos de "Modificar" a tu usuario en la carpeta del juego para que ScriptHook y el mod puedan funcionar correctamente.
 
 ## Créditos
-*   **Desarrollo y Arquitectura:** [JesusRondon2310](https://github.com/JesusRondon2310)
+*   **Desarrollo y Arquitectura:** [JesusRondon2310/Platanito22](https://github.com/JesusRondon2310) 
+*   **Coder y Solucionador de bugs:** [DeepSeek](https://www.deepseek.com/en/) y [Claude](https://claude.ai/)
 *   **Colaborador:** [Ricardo Vera](https://github.com/ricardovera76)
